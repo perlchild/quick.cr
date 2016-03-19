@@ -3,7 +3,7 @@ require "./spec_helper"
 Spec2.describe Quick do
   include Quick
 
-  macro describe_integer_generator(ty, count, median, median_precision, uniq_count)
+  macro describe_integer_generator(ty, count, median, median_precision, uniq_count, log10_count)
     describe "x : {{ty}}" do
       subject(generator) { GeneratorFor({{ty}}) }
 
@@ -27,6 +27,12 @@ Spec2.describe Quick do
       it "generates enough unique values" do
         enough_uniqueness({{count}}, generator, {{uniq_count}}, &.itself)
       end
+
+      it "generates enough unique log10 values" do
+        enough_uniqueness({{count}}, generator, {{log10_count}}) do |x|
+          Math.log10(x).to_i
+        end
+      end
     end
   end
 
@@ -35,7 +41,8 @@ Spec2.describe Quick do
     count=100000,
     median=0,
     median_precision=1e+7,
-    uniq_count=99000
+    uniq_count=99000,
+    log10_count=5
   )
 
   describe_integer_generator(
@@ -43,7 +50,8 @@ Spec2.describe Quick do
     count=100000,
     median=Int32::MAX.to_u32,
     median_precision=1e+7,
-    uniq_count=99000
+    uniq_count=99000,
+    log10_count=5
   )
 
   describe_integer_generator(
@@ -51,7 +59,8 @@ Spec2.describe Quick do
     count=10000,
     median=0,
     median_precision=10,
-    uniq_count=250
+    uniq_count=250,
+    log10_count=3
   )
 
   describe_integer_generator(
@@ -59,7 +68,8 @@ Spec2.describe Quick do
     count=10000,
     median=Int8::MAX.to_u8,
     median_precision=10,
-    uniq_count=250
+    uniq_count=250,
+    log10_count=3
   )
 
   describe_integer_generator(
