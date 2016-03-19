@@ -63,7 +63,7 @@ module Quick
       # => [-2^63, 2^63)
       # and to increase uniq values:
       # + [-2^31, 2^31]
-      _int.to_i64 * _int.to_i64 * rand(0...3) + rand(0...1) +
+      _int.to_i64 * _int.to_i64 * rand(0..2) + rand(0..1) +
         _int.to_i64
     end
 
