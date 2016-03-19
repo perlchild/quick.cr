@@ -3,27 +3,91 @@ require "./spec_helper"
 Spec2.describe Quick do
   include Quick
 
-  describe "x : Int32" do
-    subject(generator) { GeneratorFor(Int32) }
+  macro describe_integer_generator(ty, count, median, median_precision, uniq_count)
+    describe "x : {{ty}}" do
+      subject(generator) { GeneratorFor({{ty}}) }
 
-    it "returns an Int32" do
-      expect(generator.next).to be_a(Int32)
-      expect(typeof(generator.next)).to eq(Int32)
-    end
+      it "returns an {{ty}}" do
+        expect(generator.next).to be_a({{ty}})
+        expect(typeof(generator.next)).to eq({{ty}})
+      end
 
-    it "has proper median" do
-      median(100000, generator, 0, 30000, &.itself)
-    end
+      it "has proper median" do
+        median({{count}}, generator, {{median}}, {{median_precision}}, &.itself)
+      end
 
-    it "has proper variance" do
-      variance(100000, generator, 0, Int32::MIN - 1, 0.9, 1, &.itself)
-      variance(100000, generator, 0, Int32::MAX + 1, 0.9, 1, &.itself)
-    end
+      it "has proper min variance" do
+        variance({{count}}, generator, 0, {{ty}}::MIN, 0.9, 1, &.itself)
+      end
 
-    it "generates enough unique values" do
-      enough_uniqueness(100000, generator, 99000, &.itself)
+      it "has proper max variance" do
+        variance({{count}}, generator, 0, {{ty}}::MAX, 0.9, 1, &.itself)
+      end
+
+      it "generates enough unique values" do
+        enough_uniqueness({{count}}, generator, {{uniq_count}}, &.itself)
+      end
     end
   end
+
+  describe_integer_generator(
+    Int32,
+    count=100000,
+    median=0,
+    median_precision=1e+7,
+    uniq_count=99000
+  )
+
+  describe_integer_generator(
+    UInt32,
+    count=100000,
+    median=Int32::MAX.to_u32,
+    median_precision=1e+7,
+    uniq_count=99000
+  )
+
+  describe_integer_generator(
+    Int8,
+    count=10000,
+    median=0,
+    median_precision=10,
+    uniq_count=250
+  )
+
+  describe_integer_generator(
+    UInt8,
+    count=10000,
+    median=Int8::MAX.to_u8,
+    median_precision=10,
+    uniq_count=250
+  )
+
+  describe_integer_generator(
+    UInt16,
+    count=100000,
+    median=Int16::MAX.to_u16,
+    median_precision=1000,
+    uniq_count=45000
+  )
+
+  describe_integer_generator(
+    Int64,
+    count=100000,
+    median=0,
+    median_precision=5e+16,
+    uniq_count=99000
+  )
+
+  describe_integer_generator(
+    UInt64,
+    count=100000,
+    median=Int64::MAX.to_u64,
+    median_precision=5e+16,
+    uniq_count=99000
+  )
+
+  # FIXME: https://github.com/crystal-lang/crystal/issues/2321
+  #describe_integer_generator(Int16, ...)
 
   describe "s : String" do
     subject(generator) { GeneratorFor(String) }
@@ -56,7 +120,7 @@ Spec2.describe Quick do
 
   def median(count, generator, expected, difference)
     values = (0..count).map { yield(generator.next) }
-    actual = values.sum / values.size
+    actual = values.map(&.to_f./(count)).sum
     expect(actual).to be_close(expected, difference)
   end
 
