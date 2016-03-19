@@ -38,69 +38,69 @@ Spec2.describe "Basic generators" do
 
   describe_integer_generator(
     Int32,
-    count=100000,
-    median=0,
-    median_precision=1e+7,
-    uniq_count=99000,
-    log10_count=5
+    count = 100000,
+    median = 0,
+    median_precision = 1e+7,
+    uniq_count = 99000,
+    log10_count = 5
   )
 
   describe_integer_generator(
     UInt32,
-    count=100000,
-    median=Int32::MAX.to_u32,
-    median_precision=1e+7,
-    uniq_count=99000,
-    log10_count=5
+    count = 100000,
+    median = Int32::MAX.to_u32,
+    median_precision = 1e+7,
+    uniq_count = 99000,
+    log10_count = 5
   )
 
   describe_integer_generator(
     Int8,
-    count=10000,
-    median=0,
-    median_precision=10,
-    uniq_count=250,
-    log10_count=3
+    count = 10000,
+    median = 0,
+    median_precision = 10,
+    uniq_count = 250,
+    log10_count = 3
   )
 
   describe_integer_generator(
     UInt8,
-    count=10000,
-    median=Int8::MAX.to_u8,
-    median_precision=10,
-    uniq_count=250,
-    log10_count=3
+    count = 10000,
+    median = Int8::MAX.to_u8,
+    median_precision = 10,
+    uniq_count = 250,
+    log10_count = 3
   )
 
   describe_integer_generator(
     UInt16,
-    count=100000,
-    median=Int16::MAX.to_u16,
-    median_precision=1000,
-    uniq_count=45000,
-    log10_count=4
+    count = 100000,
+    median = Int16::MAX.to_u16,
+    median_precision = 1000,
+    uniq_count = 45000,
+    log10_count = 4
   )
 
   describe_integer_generator(
     Int64,
-    count=100000,
-    median=0,
-    median_precision=1e+17,
-    uniq_count=99000,
-    log10_count=12
+    count = 100000,
+    median = 0,
+    median_precision = 1e+17,
+    uniq_count = 99000,
+    log10_count = 12
   )
 
   describe_integer_generator(
     UInt64,
-    count=100000,
-    median=Int64::MAX.to_u64,
-    median_precision=1e+17,
-    uniq_count=99000,
-    log10_count=12
+    count = 100000,
+    median = Int64::MAX.to_u64,
+    median_precision = 1e+17,
+    uniq_count = 99000,
+    log10_count = 12
   )
 
   # FIXME: https://github.com/crystal-lang/crystal/issues/2321
-  #describe_integer_generator(Int16, ...)
+  # describe_integer_generator(Int16, ...)
 
   macro describe_float_generator(bits, count, median, median_precision, uniq_count, log10_count)
     {% ty = "Float#{bits}".id %}
@@ -140,20 +140,20 @@ Spec2.describe "Basic generators" do
 
   describe_float_generator(
     64,
-    count=100000,
-    median=0,
-    median_precision=1e305,
-    uniq_count=90000,
-    log10_count=600
+    count = 100000,
+    median = 0,
+    median_precision = 1e305,
+    uniq_count = 90000,
+    log10_count = 600
   )
 
   describe_float_generator(
     32,
-    count=100000,
-    median=0,
-    median_precision=1e305,
-    uniq_count=90000,
-    log10_count=80
+    count = 100000,
+    median = 0,
+    median_precision = 1e305,
+    uniq_count = 90000,
+    log10_count = 80
   )
 
   describe "s : String" do
