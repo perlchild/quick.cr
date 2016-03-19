@@ -5,6 +5,20 @@ module Quick
   CHARS = (0..127).map(&.chr).join.gsub(/[^[:print:]]/, "")
   RNG = Random::DEFAULT
 
+  FLOAT64_MIN_ORDER = -324
+  FLOAT64_MAX_ORDER = 308
+  FLOAT64_MIN_MANTISSA = -1.7
+  FLOAT64_MAX_MANTISSA = -FLOAT64_MIN_MANTISSA
+  FLOAT64_MIN = -1.797e+308
+  FLOAT64_MAX = -FLOAT64_MIN
+
+  FLOAT32_MIN_ORDER = -45
+  FLOAT32_MAX_ORDER = 38
+  FLOAT32_MIN_MANTISSA = -1.7
+  FLOAT32_MAX_MANTISSA = -FLOAT32_MIN_MANTISSA
+  FLOAT32_MIN = -1.797e+38
+  FLOAT32_MAX = -FLOAT32_MIN
+
   class GeneratorFor(T)
     def self.next?
       case
@@ -29,6 +43,12 @@ module Quick
 
       when T == UInt64
         _int64.to_u64
+
+      when T == Float64
+        _float64
+
+      when T == Float32
+        _float32
 
       when T == String
         String.build do |io|
@@ -56,6 +76,16 @@ module Quick
       # + [-2^31, 2^31]
       _int.to_i64 * _int.to_i64 * rand(0...3) + rand(0...1) +
         _int.to_i64
+    end
+
+    def self._float64
+      RNG.rand(FLOAT64_MIN_MANTISSA..FLOAT64_MAX_MANTISSA) * 10 **
+        RNG.rand(FLOAT64_MIN_ORDER..FLOAT64_MAX_ORDER)
+    end
+
+    def self._float32
+      (RNG.rand(FLOAT32_MIN_MANTISSA..FLOAT32_MAX_MANTISSA) * 10 **
+        RNG.rand(FLOAT32_MIN_ORDER..FLOAT32_MAX_ORDER)).to_f32
     end
   end
 end
