@@ -1,6 +1,6 @@
 require "./spec_helper"
 
-Spec2.describe Quick do
+Spec2.describe "Basic generators" do
   include Quick
 
   macro describe_integer_generator(ty, count, median, median_precision, uniq_count, log10_count)
