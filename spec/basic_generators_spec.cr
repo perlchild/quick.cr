@@ -185,6 +185,28 @@ Spec2.describe "Basic generators" do
     end
   end
 
+  describe "b : Bool" do
+    subject(generator) { GeneratorFor(Bool) }
+
+    it "returns a Bool" do
+      expect(generator.next).to be_a(Bool)
+      expect(typeof(generator.next)).to eq(Bool)
+    end
+
+    it "has good distribution" do
+      expected = {
+        true => 50000,
+        false => 50000
+      }
+
+      distribution(100000, generator, expected, 1000, &.itself)
+    end
+
+    it "doesn't have very long streaks" do
+      streaks(100000, generator, 30, &.itself)
+    end
+  end
+
   def median(count, generator, expected, difference)
     values = (0..count).map { yield(generator.next) }
     actual = values.map(&.to_f./(count)).sum
@@ -203,5 +225,32 @@ Spec2.describe "Basic generators" do
   def enough_uniqueness(count, generator, expected)
     values = (0..count).map { yield(generator.next) }
     expect(values.uniq.size).to_be >= expected
+  end
+
+  def distribution(count, generator, expected_counts, difference)
+    values = (0..count).map { yield(generator.next) }
+    expected_counts.each do |value, expected|
+      expect(values.count { |x| value == x })
+        .to be_close(expected, difference)
+    end
+  end
+
+  def streaks(count, generator, max_streak)
+    largest = 0
+    streak = 1
+    previous = yield(generator.next)
+    (0..count).each do
+      value = yield(generator.next)
+
+      if value == previous
+        streak += 1
+        largest = [streak, largest].max
+      else
+        previous = value
+        streak = 1
+      end
+    end
+
+    expect(largest).to_be < max_streak
   end
 end

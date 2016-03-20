@@ -47,6 +47,8 @@ module Quick
             io << CHARS[rand(CHARS.size)]
           end
         end
+      when T == Bool
+        RNG.next_bool
       end
     end
 
@@ -68,13 +70,26 @@ module Quick
     end
 
     def self._float64
-      RNG.rand(FLOAT64_MIN_MANTISSA..FLOAT64_MAX_MANTISSA) * 10 **
-        RNG.rand(FLOAT64_MIN_ORDER..FLOAT64_MAX_ORDER)
+      _float(
+        FLOAT64_MIN_MANTISSA,
+        FLOAT64_MAX_MANTISSA,
+        FLOAT64_MIN_ORDER,
+        FLOAT64_MAX_ORDER
+      )
     end
 
     def self._float32
-      (RNG.rand(FLOAT32_MIN_MANTISSA..FLOAT32_MAX_MANTISSA) * 10 **
-        RNG.rand(FLOAT32_MIN_ORDER..FLOAT32_MAX_ORDER)).to_f32
+      _float(
+        FLOAT32_MIN_MANTISSA,
+        FLOAT32_MAX_MANTISSA,
+        FLOAT32_MIN_ORDER,
+        FLOAT32_MAX_ORDER
+      ).to_f32
+    end
+
+    def self._float(min_mantissa, max_mantissa, min_order, max_order)
+      RNG.rand(min_mantissa..max_mantissa) * 10 **
+        RNG.rand(min_order..max_order)
     end
   end
 end

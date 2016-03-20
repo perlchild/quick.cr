@@ -47,7 +47,7 @@ block arguments. Possible options:
   - [x] `x : Int32`,
   - [x] `s : String`,
   - [x] `f : Float64`,
-  - [ ] `b : Bool`,
+  - [x] `b : Bool`,
   - [ ] `a : Array(Int32)`,
   - [ ] `h : Hash(String, Float64)`
   - etc.
