@@ -207,6 +207,35 @@ Spec2.describe "Basic generators" do
     end
   end
 
+  describe "a : Array(Int32)" do
+    subject(generator) { GeneratorFor(Array(Int32)) }
+
+    it "is of type Array(Int32)" do
+      expect(generator.next).to be_a(Array(Int32))
+      expect(typeof(generator.next)).to eq(Array(Int32))
+    end
+
+    it "has proper median" do
+      median(1000, generator, 50, 5, &.size)
+    end
+
+    it "has proper min variance" do
+      variance(1000, generator, 50, 0, 0.9, 1, &.size)
+    end
+
+    it "has proper max variance" do
+      variance(1000, generator, 50, Quick::MAX_SIZE, 0.9, 1, &.size)
+    end
+
+    it "generates enough unique sized arrays" do
+      enough_uniqueness(1000, generator, 99, &.size)
+    end
+
+    it "generates enough unique valued arrays" do
+      enough_uniqueness(1000, generator, 900, &.itself)
+    end
+  end
+
   def median(count, generator, expected, difference)
     values = (0..count).map { yield(generator.next) }
     actual = values.map(&.to_f./(count)).sum

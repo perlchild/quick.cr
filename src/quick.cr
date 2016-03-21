@@ -49,6 +49,13 @@ module Quick
         end
       when T == Bool
         RNG.next_bool
+      when T == Array(Int32)
+        array = [] of Int32
+        size = rand(MAX_SIZE)
+        size.times do
+          array << _int
+        end
+        array
       end
     end
 
