@@ -138,4 +138,18 @@ module Quick
       CHARS[rand(CHARS.size)]
     end
   end
+
+  class Literal(A)
+    def self.next
+      A
+    end
+
+    macro def_generator(name, value)
+      class {{name.id}}
+        def self.next
+          {{value}}
+        end
+      end
+    end
+  end
 end

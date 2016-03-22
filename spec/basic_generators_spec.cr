@@ -243,6 +243,31 @@ Spec2.describe "Basic generators" do
     end
   end
 
+  macro describe_literal_generator(generator, value)
+    describe "l : {{generator}}" do
+      subject(generator) { {{generator}} }
+
+      it "returns an Int32" do
+        expect(generator.next).to be_a(typeof({{value}}))
+        expect(typeof(generator.next)).to eq(typeof({{value}}))
+      end
+
+      it "always returns a specified literal value" do
+        100.times do
+          expect(generator.next).to eq({{value}})
+        end
+      end
+    end
+  end
+
+  describe_literal_generator(Literal(42), value = 42)
+
+  Literal.def_generator(HelloWorldGen, "hello world")
+  describe_literal_generator(HelloWorldGen, value = "hello world")
+
+  Literal.def_generator(SomeArrayGen, [1, 2, 4, 3])
+  describe_literal_generator(SomeArrayGen, value = [1, 2, 4, 3])
+
   def median(count, generator, expected, difference)
     values = (0..count).map { yield(generator.next) }
     actual = values.map(&.to_f./(count)).sum
