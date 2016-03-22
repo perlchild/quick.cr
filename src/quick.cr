@@ -20,36 +20,67 @@ module Quick
   FLOAT32_MAX          = -FLOAT32_MIN
 
   class GeneratorFor(T)
-    def self.next?
-      case
-      when T == Int32
-        _int
-      when T == UInt32
-        _int.to_u32
-      when T == Int8
-        _int.to_i8
-      when T == UInt8
-        _int.to_u8
-      when T == UInt16
-        _int.to_u16
-      when T == Int64
-        _int64
-      when T == UInt64
-        _int64.to_u64
-      when T == Float64
-        _float64
-      when T == Float32
-        _float32
-      when T == String
-        String.build do |io|
-          _array_like(io) { _char }
-        end
-      when T == Bool
-        RNG.next_bool
-      else
-        t = uninitialized T
-        _array_like_for(t)
+    def self.next_for(t : Bool)
+      RNG.next_bool
+    end
+
+    def self.next_for(t : Int32)
+      _int
+    end
+
+    def self.next_for(t : UInt32)
+      _int.to_u32
+    end
+
+    def self.next_for(t : Int8)
+      _int.to_i8
+    end
+
+    def self.next_for(t : UInt8)
+      _int.to_u8
+    end
+
+    # FIXME: when Int16 issue is resolved
+    # def self.next_for(t : Int16)
+    #   _int.to_i16
+    # end
+
+    def self.next_for(t : UInt16)
+      _int.to_u16
+    end
+
+    def self.next_for(t : Int64)
+      _int64
+    end
+
+    def self.next_for(t : UInt64)
+      _int64.to_u64
+    end
+
+    def self.next_for(t : Float64)
+      _float64
+    end
+
+    def self.next_for(t : Float32)
+      _float32
+    end
+
+    def self.next_for(t : String)
+      String.build do |io|
+        _array_like(io) { _char }
       end
+    end
+
+    def self.next_for(t : Enumerable(U))
+      _array_like([] of U) { GeneratorFor(U).next }
+    end
+
+    def self.next_for(t)
+    end
+
+    def self.next?
+      t = uninitialized T
+      next_for(t)
     end
 
     def self.next
@@ -105,13 +136,6 @@ module Quick
 
     def self._char
       CHARS[rand(CHARS.size)]
-    end
-
-    def self._array_like_for(t : Enumerable(U))
-      _array_like([] of U) { GeneratorFor(U).next }
-    end
-
-    def self._array_like_for(t)
     end
   end
 end
