@@ -20,58 +20,58 @@ module Quick
   FLOAT32_MAX          = -FLOAT32_MIN
 
   class GeneratorFor(T)
-    def self.next_for(t : Bool)
+    def self.next_for(t : Bool.class)
       RNG.next_bool
     end
 
-    def self.next_for(t : Int32)
+    def self.next_for(t : Int32.class)
       _int
     end
 
-    def self.next_for(t : UInt32)
+    def self.next_for(t : UInt32.class)
       _int.to_u32
     end
 
-    def self.next_for(t : Int8)
+    def self.next_for(t : Int8.class)
       _int.to_i8
     end
 
-    def self.next_for(t : UInt8)
+    def self.next_for(t : UInt8.class)
       _int.to_u8
     end
 
     # FIXME: when Int16 issue is resolved
-    # def self.next_for(t : Int16)
+    # def self.next_for(t : Int16.class)
     #   _int.to_i16
     # end
 
-    def self.next_for(t : UInt16)
+    def self.next_for(t : UInt16.class)
       _int.to_u16
     end
 
-    def self.next_for(t : Int64)
+    def self.next_for(t : Int64.class)
       _int64
     end
 
-    def self.next_for(t : UInt64)
+    def self.next_for(t : UInt64.class)
       _int64.to_u64
     end
 
-    def self.next_for(t : Float64)
+    def self.next_for(t : Float64.class)
       _float64
     end
 
-    def self.next_for(t : Float32)
+    def self.next_for(t : Float32.class)
       _float32
     end
 
-    def self.next_for(t : String)
+    def self.next_for(t : String.class)
       String.build do |io|
         _array_like(io) { _char }
       end
     end
 
-    def self.next_for(t : Enumerable(U))
+    def self.next_for(t : Array(U).class)
       _array_like([] of U) { GeneratorFor(U).next }
     end
 
@@ -79,8 +79,7 @@ module Quick
     end
 
     def self.next?
-      t = uninitialized T
-      next_for(t)
+      next_for(T)
     end
 
     def self.next
