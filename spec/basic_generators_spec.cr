@@ -156,7 +156,7 @@ Spec2.describe "Basic generators" do
     log10_count = 80
   )
 
-  macro describe_array_like(ty)
+  macro describe_array_like(ty, median_size = 50, median_precision = 5, min_size = 0, max_size = Quick::MAX_SIZE, unique_sized = 99)
     describe "s : {{ty}}" do
       subject(generator) { GeneratorFor({{ty}}) }
 
@@ -166,19 +166,19 @@ Spec2.describe "Basic generators" do
       end
 
       it "has proper median" do
-        median(1000, generator, 50, 5, &.size)
+        median(1000, generator, {{median_size}}, {{median_precision}}, &.size)
       end
 
       it "has proper min variance" do
-        variance(1000, generator, 50, 0, 0.9, 1, &.size)
+        variance(1000, generator, {{median_size}}, {{min_size}}, 0.9, 1, &.size)
       end
 
       it "has proper max variance" do
-        variance(1000, generator, 50, Quick::MAX_SIZE, 0.9, 1, &.size)
+        variance(1000, generator, {{median_size}}, {{max_size}}, 0.9, 1, &.size)
       end
 
       it "generates enough unique sized arrays" do
-        enough_uniqueness(1000, generator, 99, &.size)
+        enough_uniqueness(1000, generator, {{unique_sized}}, &.size)
       end
 
       it "generates enough unique valued values" do
@@ -210,6 +210,17 @@ Spec2.describe "Basic generators" do
 
   describe_array_like(Array(Array(Int32)))
 
+  describe_array_like(
+    Tuple(Int32, String),
+    median_size = 2,
+    median_precision = 0.1,
+    min_size = 2,
+    max_size = 2,
+    unique_sized = 1
+  )
+
+  describe_array_like(Hash(String, Float64))
+
   describe "b : Bool" do
     subject(generator) { GeneratorFor(Bool) }
 
@@ -239,6 +250,8 @@ Spec2.describe "Basic generators" do
   end
 
   def variance(count, generator, median, extreme, threshold, expected)
+    return if median == extreme
+
     values = (0..count).map { yield(generator.next) }
 
     extreme_count = values

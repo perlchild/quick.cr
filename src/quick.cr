@@ -75,15 +75,16 @@ module Quick
       _array_like([] of U) { GeneratorFor(U).next }
     end
 
-    def self.next_for(t)
+    def self.next_for(t : {K, V}.class)
+      {GeneratorFor(K).next, GeneratorFor(V).next}
     end
 
-    def self.next?
-      next_for(T)
+    def self.next_for(t : Hash(K, V).class)
+      GeneratorFor(Array({K, V})).next.to_h
     end
 
     def self.next
-      next?.not_nil! as T
+      next_for(T).not_nil! as T
     end
 
     def self._int

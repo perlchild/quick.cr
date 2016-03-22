@@ -49,7 +49,8 @@ block arguments. Possible options:
   - [x] `f : Float64`,
   - [x] `b : Bool`,
   - [x] `a : Array(Int32)`,
-  - [ ] `h : Hash(String, Float64)`
+  - [x] `p : Tuple(Int32, Float64)` (pair)
+  - [x] `h : Hash(String, Float64)`
   - etc.
 - [ ] A concrete value: `value: Quick::Literal(79)`
 - [ ] One of the range: `value: Quick::Range(13..79)`
