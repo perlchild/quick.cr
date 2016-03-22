@@ -42,20 +42,12 @@ module Quick
         _float32
       when T == String
         String.build do |io|
-          size = rand(MAX_SIZE)
-          size.times do
-            io << CHARS[rand(CHARS.size)]
-          end
+          _array_like(io) { _char }
         end
       when T == Bool
         RNG.next_bool
       when T == Array(Int32)
-        array = [] of Int32
-        size = rand(MAX_SIZE)
-        size.times do
-          array << _int
-        end
-        array
+        _array_like([] of Int32) { _int }
       end
     end
 
@@ -97,6 +89,21 @@ module Quick
     def self._float(min_mantissa, max_mantissa, min_order, max_order)
       RNG.rand(min_mantissa..max_mantissa) * 10 **
         RNG.rand(min_order..max_order)
+    end
+
+    def self._array_like(array)
+      _size.times do
+        array << yield
+      end
+      array
+    end
+
+    def self._size
+      rand(MAX_SIZE)
+    end
+
+    def self._char
+      CHARS[rand(CHARS.size)]
     end
   end
 end

@@ -156,34 +156,39 @@ Spec2.describe "Basic generators" do
     log10_count = 80
   )
 
-  describe "s : String" do
-    subject(generator) { GeneratorFor(String) }
+  macro describe_array_like(ty)
+    describe "s : {{ty}}" do
+      subject(generator) { GeneratorFor({{ty}}) }
 
-    it "returns a String" do
-      expect(generator.next).to be_a(String)
-      expect(typeof(generator.next)).to eq(String)
-    end
+      it "returns a {{ty}}" do
+        expect(generator.next).to be_a({{ty}})
+        expect(typeof(generator.next)).to eq({{ty}})
+      end
 
-    it "has proper median" do
-      median(1000, generator, 50, 5, &.size)
-    end
+      it "has proper median" do
+        median(1000, generator, 50, 5, &.size)
+      end
 
-    it "has proper min variance" do
-      variance(1000, generator, 50, 0, 0.9, 1, &.size)
-    end
+      it "has proper min variance" do
+        variance(1000, generator, 50, 0, 0.9, 1, &.size)
+      end
 
-    it "has proper max variance" do
-      variance(1000, generator, 50, Quick::MAX_SIZE, 0.9, 1, &.size)
-    end
+      it "has proper max variance" do
+        variance(1000, generator, 50, Quick::MAX_SIZE, 0.9, 1, &.size)
+      end
 
-    it "generates enough unique sized strings" do
-      enough_uniqueness(1000, generator, 99, &.size)
-    end
+      it "generates enough unique sized arrays" do
+        enough_uniqueness(1000, generator, 99, &.size)
+      end
 
-    it "generates enough unique valued strings" do
-      enough_uniqueness(1000, generator, 900, &.itself)
+      it "generates enough unique valued values" do
+        enough_uniqueness(1000, generator, 900, &.itself)
+      end
     end
   end
+
+  describe_array_like(String)
+  describe_array_like(Array(Int32))
 
   describe "b : Bool" do
     subject(generator) { GeneratorFor(Bool) }
@@ -204,35 +209,6 @@ Spec2.describe "Basic generators" do
 
     it "doesn't have very long streaks" do
       streaks(100000, generator, 30, &.itself)
-    end
-  end
-
-  describe "a : Array(Int32)" do
-    subject(generator) { GeneratorFor(Array(Int32)) }
-
-    it "is of type Array(Int32)" do
-      expect(generator.next).to be_a(Array(Int32))
-      expect(typeof(generator.next)).to eq(Array(Int32))
-    end
-
-    it "has proper median" do
-      median(1000, generator, 50, 5, &.size)
-    end
-
-    it "has proper min variance" do
-      variance(1000, generator, 50, 0, 0.9, 1, &.size)
-    end
-
-    it "has proper max variance" do
-      variance(1000, generator, 50, Quick::MAX_SIZE, 0.9, 1, &.size)
-    end
-
-    it "generates enough unique sized arrays" do
-      enough_uniqueness(1000, generator, 99, &.size)
-    end
-
-    it "generates enough unique valued arrays" do
-      enough_uniqueness(1000, generator, 900, &.itself)
     end
   end
 
