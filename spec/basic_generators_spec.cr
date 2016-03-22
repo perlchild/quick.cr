@@ -188,7 +188,27 @@ Spec2.describe "Basic generators" do
   end
 
   describe_array_like(String)
+
+  describe_array_like(Array(UInt32))
   describe_array_like(Array(Int32))
+
+  describe_array_like(Array(UInt8))
+  describe_array_like(Array(Int8))
+
+  describe_array_like(Array(UInt16))
+  # FIXME: uncomment, when Int16 generator works
+  # describe_array_like(Array(Int16))
+
+  describe_array_like(Array(UInt64))
+  describe_array_like(Array(Int64))
+
+  describe_array_like(Array(Float32))
+  describe_array_like(Array(Float64))
+
+  describe_array_like(Array(String))
+  describe_array_like(Array(Bool))
+
+  describe_array_like(Array(Array(Int32)))
 
   describe "b : Bool" do
     subject(generator) { GeneratorFor(Bool) }

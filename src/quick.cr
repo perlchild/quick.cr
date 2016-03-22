@@ -46,8 +46,9 @@ module Quick
         end
       when T == Bool
         RNG.next_bool
-      when T == Array(Int32)
-        _array_like([] of Int32) { _int }
+      else
+        t = uninitialized T
+        _array_like_for(t)
       end
     end
 
@@ -104,6 +105,13 @@ module Quick
 
     def self._char
       CHARS[rand(CHARS.size)]
+    end
+
+    def self._array_like_for(t : Enumerable(U))
+      _array_like([] of U) { GeneratorFor(U).next }
+    end
+
+    def self._array_like_for(t)
     end
   end
 end

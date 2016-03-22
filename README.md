@@ -48,7 +48,7 @@ block arguments. Possible options:
   - [x] `s : String`,
   - [x] `f : Float64`,
   - [x] `b : Bool`,
-  - [ ] `a : Array(Int32)`,
+  - [x] `a : Array(Int32)`,
   - [ ] `h : Hash(String, Float64)`
   - etc.
 - [ ] A concrete value: `value: Quick::Literal(79)`
