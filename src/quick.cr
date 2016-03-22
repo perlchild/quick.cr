@@ -19,6 +19,10 @@ module Quick
   FLOAT32_MIN          = -1.797e+38
   FLOAT32_MAX          = -FLOAT32_MIN
 
+  module Generator(T)
+    abstract def next : T
+  end
+
   class GeneratorFor(T)
     def self.next_for(t : Bool.class)
       RNG.next_bool
@@ -83,8 +87,20 @@ module Quick
       GeneratorFor(Array({K, V})).next.to_h
     end
 
+    def self.next_for(t : Generator(U))
+      t
+    end
+
     def self.next
-      next_for(T).not_nil! as T
+      casted_value(next_for(T).not_nil!)
+    end
+
+    def self.casted_value(value : Generator(U))
+      value.next as U
+    end
+
+    def self.casted_value(value)
+      value as T
     end
 
     def self._int
@@ -139,13 +155,11 @@ module Quick
     end
   end
 
-  class Literal(A)
-    def self.next
-      A
-    end
-
+  module Literal
     macro def_generator(name, value)
       class {{name.id}}
+        extend Generator(typeof({{value}}))
+
         def self.next
           {{value}}
         end

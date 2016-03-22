@@ -52,7 +52,6 @@ block arguments. Possible options:
   - [x] `p : Tuple(Int32, Float64)` (pair)
   - [x] `h : Hash(String, Float64)`
   - etc.
-- [x] A concrete value: `value: Quick::Literal(79)` (supports only constant values).
 - [ ] One of the range: `value: Quick::Range(13..79)`
 - [ ] Array of specific size: `a: Quick::Array(Int32, 50)`
 - [ ] Array of generated size: `a: Quick::Array(Int32, 0..1000)`
@@ -63,12 +62,12 @@ block arguments. Possible options:
 - [ ] Pick one value from the list: `value: Quick::Choose("red", "green", "blue")`
 - [ ] Pick one generator from the list: `value: Quick::Choose(Int32, "hello world", Bool)`
 
-### Literal generator with non-constant value
+### Literal generator that returns same value
 
 First define your own literal generator class, that will always return provided value:
 
 ```crystal
-Literal.def_generator(HelloWorldGen, "hello world")
+Quick::Literal.def_generator(HelloWorldGen, "hello world")
 ```
 
 And then use it:
