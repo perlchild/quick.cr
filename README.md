@@ -10,6 +10,7 @@ Add this to your application's `shard.yml`:
 dependencies:
   quick:
     github: waterlink/quick.cr
+    version: ~> 1.0
 ```
 
 ## Usage
