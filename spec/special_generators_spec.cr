@@ -100,6 +100,19 @@ Spec2.describe "Special generators" do
     Int64
   )
 
+  MIN_RANGE = -3242342000000
+  MAX_RANGE = 3242342000000
+
+  describe_integer_generator(
+    Quick::Range64(MIN_RANGE, MAX_RANGE),
+    count = 100000,
+    median = 0,
+    median_precision = 1e12,
+    uniq_count = 90000,
+    log10_count = 6,
+    Int64
+  )
+
   describe_float_generator(
     32,
     count = 100000,
