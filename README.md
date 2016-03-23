@@ -96,13 +96,6 @@ protocol:
 ```crystal
 record User, :email, :password
 
-Quick.register_generator(User) do |email_size_generator : Quick::Generators::Size, password_size_generator : Quick::Generators::Size|
-  User.new(
-    Quick.string(email_size_generator.next) + "@example.org",
-    Quick.string(password_size_generator.next)
-  )
-end
-
 # E - email size gen
 # P - password size gen
 class UserGen(E, P)
