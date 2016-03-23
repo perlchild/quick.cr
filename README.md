@@ -44,27 +44,27 @@ values.
 block arguments. Possible options:
 
 - A basic type with default min/max limits:
-  - [x] `x : Int32`,
-  - [x] `s : String`,
-  - [x] `f : Float64`,
-  - [x] `b : Bool`,
-  - [x] `a : Array(Int32)`,
-  - [x] `p : Tuple(Int32, Float64)` (pair)
-  - [x] `h : Hash(String, Float64)`
-  - etc.
-- [x] One of the range: `value : Quick::Range(13, 79)`
-  - [x] `Quick::Range` is an alias for `Quick::Range32`, which works only with `Int32`
-  - [x] `Quick::Range8` and `Quick::Range16` are available for corresponding `Int8` and `Int16` types
-  - [x] `Quick::Range64` is available, but cannot be used with ranges out of `Int32` boundaries (see: crystal-lang/crystal#2353)
-  - [x] `Quick::FloatRange` and `Quick::FloatRange64` for ranges of type `Float64`
-  - [x] `Quick::FloatRange32` for ranges of type `Float32`
-- [x] Array of specific size: `a : Quick::Array(Int32, 50)`
-- [x] Array of generated size: `a : Quick::Array(Int32, Quick::Range(0, 1000))`
-- [x] String of specific size: `s : Quick::String(15)`
-- [x] String of generated size: `s : Quick::String(Quick::Range(0, 50))`
-- [x] Numeric value for a size (same as `Int32`, but has smaller default limit 0..100): `size : Quick::Size`
-- [x] Pick one value from the list: `Quick.def_choice(ColorGen, "red", "blue", "green")` and use it as `value : ColorGen`
-- [x] Pick one generator from the list: `Quick.def_gen_choice(RandomStuffGen, Int32, HelloWorldGen, ColorGen, FloatRange(2, 4), Bool)` and use it as `value : RandomStuffGen`
+  - `x : Int32`,
+  - `s : String`,
+  - `f : Float64`,
+  - `c : Char`
+  - `b : Bool`,
+  - `a : Array(Int32)`,
+  - `p : Tuple(Int32, Float64)` (pair)
+  - `h : Hash(String, Float64)`
+- One of the range: `value : Quick::Range(13, 79)`
+  - `Quick::Range` is an alias for `Quick::Range32`, which works only with `Int32`
+  - `Quick::Range8` and `Quick::Range16` are available for corresponding `Int8` and `Int16` types
+  - `Quick::Range64` is available, but cannot be used with ranges out of `Int32` boundaries (see: crystal-lang/crystal#2353)
+  - `Quick::FloatRange` and `Quick::FloatRange64` for ranges of type `Float64`
+  - `Quick::FloatRange32` for ranges of type `Float32`
+- Array of specific size: `a : Quick::Array(Int32, 50)`
+- Array of generated size: `a : Quick::Array(Int32, Quick::Range(0, 1000))`
+- String of specific size: `s : Quick::String(15)`
+- String of generated size: `s : Quick::String(Quick::Range(0, 50))`
+- Numeric value for a size (same as `Int32`, but has smaller default limit 0..100): `size : Quick::Size`
+- Pick one value from the list: `Quick.def_choice(ColorGen, "red", "blue", "green")` and use it as `value : ColorGen`
+- Pick one generator from the list: `Quick.def_gen_choice(RandomStuffGen, Int32, HelloWorldGen, ColorGen, FloatRange(2, 4), Bool)` and use it as `value : RandomStuffGen`
 
 ### Literal generator that returns same value
 
@@ -86,10 +86,12 @@ end
 
 ### Building your own generator
 
-- [ ] To be done
-
 If you have your own custom data structure, that you want to generate data for,
-you simply need to register its generator with `Quick`:
+you simply need to create new generator that conforms to `Quick`'s Generator(T)
+protocol:
+
+- `include Generator(T)`, where `T` is the type of generated value, and
+- implement `self.next : T` method
 
 ```crystal
 record User, :email, :password
@@ -100,17 +102,31 @@ Quick.register_generator(User) do |email_size_generator : Quick::Generators::Siz
     Quick.string(password_size_generator.next)
   )
 end
+
+# E - email size gen
+# P - password size gen
+class UserGen(E, P)
+  include Quick
+  include Generator(User)
+
+  def self.next : User
+    User.new(
+      String(GeneratorFor(E).next).next + "@example.org",
+      String(GeneratorFor(P).next).next
+    )
+  end
+end
 ```
 
 Then you should be able to use it as:
 
 ```crystal
-Quick.check("valid user") do |user : Quick::Custom(User)|
+Quick.check("valid user") do |user : UserGen(Quick::Size, Quick::Size)|
   user.valid?
 end
 
 # or with custom size generators
-Quick.check("valid user") do |user : Quick::Custom(User, 1..15, 10..25)|
+Quick.check("valid user") do |user : UserGen(Quick::Range(10, 20), Quick::Range(16, 21))|
   user.valid?
 end
 ```
