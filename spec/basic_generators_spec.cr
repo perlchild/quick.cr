@@ -2,39 +2,7 @@ require "./spec_helper"
 
 Spec2.describe "Basic generators" do
   include Quick
-
-  macro describe_integer_generator(ty, count, median, median_precision, uniq_count, log10_count)
-    describe "x : {{ty}}" do
-      subject(generator) { GeneratorFor({{ty}}) }
-
-      it "returns an {{ty}}" do
-        expect(generator.next).to be_a({{ty}})
-        expect(typeof(generator.next)).to eq({{ty}})
-      end
-
-      it "has proper median" do
-        median({{count}}, generator, {{median}}, {{median_precision}}, &.itself)
-      end
-
-      it "has proper min variance" do
-        variance({{count}}, generator, 0, {{ty}}::MIN, 0.9, 1, &.itself)
-      end
-
-      it "has proper max variance" do
-        variance({{count}}, generator, 0, {{ty}}::MAX, 0.9, 1, &.itself)
-      end
-
-      it "generates enough unique values" do
-        enough_uniqueness({{count}}, generator, {{uniq_count}}, &.itself)
-      end
-
-      it "generates enough unique log10 values" do
-        enough_uniqueness({{count}}, generator, {{log10_count}}) do |x|
-          Math.log10(x).to_i
-        end
-      end
-    end
-  end
+  include SpecHelpers
 
   describe_integer_generator(
     Int32,
@@ -73,6 +41,15 @@ Spec2.describe "Basic generators" do
   )
 
   describe_integer_generator(
+    Int16,
+    count = 100000,
+    median = 0,
+    median_precision = 1000,
+    uniq_count = 45000,
+    log10_count = 4
+  )
+
+  describe_integer_generator(
     UInt16,
     count = 100000,
     median = Int16::MAX.to_u16,
@@ -98,45 +75,6 @@ Spec2.describe "Basic generators" do
     uniq_count = 99000,
     log10_count = 12
   )
-
-  # FIXME: https://github.com/crystal-lang/crystal/issues/2321
-  # describe_integer_generator(Int16, ...)
-
-  macro describe_float_generator(bits, count, median, median_precision, uniq_count, log10_count)
-    {% ty = "Float#{bits}".id %}
-    {% cty = "FLOAT#{bits}".id %}
-
-    describe "f : {{ty}}" do
-      subject(generator) { GeneratorFor({{ty}}) }
-
-      it "returns a {{ty}}" do
-        expect(generator.next).to be_a({{ty}})
-        expect(typeof(generator.next)).to eq({{ty}})
-      end
-
-      it "has proper median" do
-        median({{count}}, generator, {{median}}, {{median_precision}}, &.itself)
-      end
-
-      it "has proper min variance" do
-        variance({{count}}, generator, 0, {{"#{cty}_MIN".id}}, 0.9, 1, &.itself)
-      end
-
-      it "has proper max variance" do
-        variance({{count}}, generator, 0, {{"#{cty}_MAX".id}}, 0.9, 1, &.itself)
-      end
-
-      it "generates enough unique values" do
-        enough_uniqueness({{count}}, generator, {{uniq_count}}, &.itself)
-      end
-
-      it "generates enough unique log10 values" do
-        enough_uniqueness({{count}}, generator, {{log10_count}}) do |x|
-          Math.log10(x).to_i
-        end
-      end
-    end
-  end
 
   describe_float_generator(
     64,
@@ -196,8 +134,7 @@ Spec2.describe "Basic generators" do
   describe_array_like(Array(Int8))
 
   describe_array_like(Array(UInt16))
-  # FIXME: uncomment, when Int16 generator works
-  # describe_array_like(Array(Int16))
+  describe_array_like(Array(Int16))
 
   describe_array_like(Array(UInt64))
   describe_array_like(Array(Int64))
@@ -241,54 +178,5 @@ Spec2.describe "Basic generators" do
     it "doesn't have very long streaks" do
       streaks(100000, generator, 30, &.itself)
     end
-  end
-
-  def median(count, generator, expected, difference)
-    values = (0..count).map { yield(generator.next) }
-    actual = values.map(&.to_f./(count)).sum
-    expect(actual).to be_close(expected, difference)
-  end
-
-  def variance(count, generator, median, extreme, threshold, expected)
-    return if median == extreme
-
-    values = (0..count).map { yield(generator.next) }
-
-    extreme_count = values
-      .map(&.to_f.-(extreme)./(extreme - median).+(1))
-      .count(&.>=(threshold))
-    expect(extreme_count).to_be >= expected
-  end
-
-  def enough_uniqueness(count, generator, expected)
-    values = (0..count).map { yield(generator.next) }
-    expect(values.uniq.size).to_be >= expected
-  end
-
-  def distribution(count, generator, expected_counts, difference)
-    values = (0..count).map { yield(generator.next) }
-    expected_counts.each do |value, expected|
-      expect(values.count { |x| value == x })
-        .to be_close(expected, difference)
-    end
-  end
-
-  def streaks(count, generator, max_streak)
-    largest = 0
-    streak = 1
-    previous = yield(generator.next)
-    (0..count).each do
-      value = yield(generator.next)
-
-      if value == previous
-        streak += 1
-        largest = [streak, largest].max
-      else
-        previous = value
-        streak = 1
-      end
-    end
-
-    expect(largest).to_be < max_streak
   end
 end

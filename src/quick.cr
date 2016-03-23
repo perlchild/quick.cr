@@ -1,5 +1,3 @@
-require "./quick/*"
-
 module Quick
   MAX_SIZE = 100
   CHARS    = (0..127).map(&.chr).join.gsub(/[^[:print:]]/, "")
@@ -19,8 +17,45 @@ module Quick
   FLOAT32_MIN          = -1.797e+38
   FLOAT32_MAX          = -FLOAT32_MIN
 
+  def min_for(t : RangedGenerator(T))
+    t.lower_bound
+  end
+
+  def min_for(t : Float32.class)
+    FLOAT32_MIN
+  end
+
+  def min_for(t : Float64.class)
+    FLOAT64_MIN
+  end
+
+  def min_for(t : T.class)
+    T::MIN
+  end
+
+  def max_for(t : RangedGenerator(T))
+    t.upper_bound
+  end
+
+  def max_for(t : Float32.class)
+    FLOAT32_MAX
+  end
+
+  def max_for(t : Float64.class)
+    FLOAT64_MAX
+  end
+
+  def max_for(t : T.class)
+    T::MAX
+  end
+
   module Generator(T)
     abstract def next : T
+  end
+
+  module RangedGenerator(T)
+    abstract def lower_bound : T
+    abstract def upper_bound : T
   end
 
   class GeneratorFor(T)
@@ -44,10 +79,9 @@ module Quick
       _int.to_u8
     end
 
-    # FIXME: when Int16 issue is resolved
-    # def self.next_for(t : Int16.class)
-    #   _int.to_i16
-    # end
+    def self.next_for(t : Int16.class)
+      _int.to_i16
+    end
 
     def self.next_for(t : UInt16.class)
       _int.to_u16
@@ -167,3 +201,5 @@ module Quick
     end
   end
 end
+
+require "./**"
