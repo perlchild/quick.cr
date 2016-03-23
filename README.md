@@ -52,19 +52,19 @@ block arguments. Possible options:
   - [x] `p : Tuple(Int32, Float64)` (pair)
   - [x] `h : Hash(String, Float64)`
   - etc.
-- [x] One of the range: `value: Quick::Range(13, 79)`
+- [x] One of the range: `value : Quick::Range(13, 79)`
   - [x] `Quick::Range` is an alias for `Quick::Range32`, which works only with `Int32`
   - [x] `Quick::Range8` and `Quick::Range16` are available for corresponding `Int8` and `Int16` types
   - [x] `Quick::Range64` is available, but cannot be used with ranges out of `Int32` boundaries (see: crystal-lang/crystal#2353)
   - [x] `Quick::FloatRange` and `Quick::FloatRange64` for ranges of type `Float64`
   - [x] `Quick::FloatRange32` for ranges of type `Float32`
-- [ ] Array of specific size: `a: Quick::Array(Int32, 50)`
-- [ ] Array of generated size: `a: Quick::Array(Int32, Quick::Range(0, 1000))`
-- [ ] String of specific size: `s: Quick::String(15)`
-- [ ] String of generated size: `s: Quick::String(Quick::Range(0, 50))`
-- [ ] Numeric value for a size (same as `Int32`, but has smaller default limit 0..100): `size: Quick::Size`
-- [ ] Pick one value from the list: `value: Quick::Choose("red", "green", "blue")`
-- [ ] Pick one generator from the list: `value: Quick::Choose(Int32, HelloWorldGen, FloatRange(2, 4), Bool)`
+- [ ] Array of specific size: `a : Quick::Array(Int32, 50)`
+- [ ] Array of generated size: `a : Quick::Array(Int32, Quick::Range(0, 1000))`
+- [ ] String of specific size: `s : Quick::String(15)`
+- [ ] String of generated size: `s : Quick::String(Quick::Range(0, 50))`
+- [ ] Numeric value for a size (same as `Int32`, but has smaller default limit 0..100): `size : Quick::Size`
+- [ ] Pick one value from the list: `value : Quick::Choose("red", "green", "blue")`
+- [ ] Pick one generator from the list: `value : Quick::Choose(Int32, HelloWorldGen, FloatRange(2, 4), Bool)`
 
 ### Literal generator that returns same value
 
