@@ -59,13 +59,12 @@ block arguments. Possible options:
   - [x] `Quick::FloatRange` and `Quick::FloatRange64` for ranges of type `Float64`
   - [x] `Quick::FloatRange32` for ranges of type `Float32`
 - [ ] Array of specific size: `a: Quick::Array(Int32, 50)`
-- [ ] Array of generated size: `a: Quick::Array(Int32, 0..1000)`
+- [ ] Array of generated size: `a: Quick::Array(Int32, Quick::Range(0, 1000))`
 - [ ] String of specific size: `s: Quick::String(15)`
-- [ ] String of generated size: `s: Quick::String(0..50)`
-- [ ] Numeric value of limited size: `i: Quick::Int32(-200..200)` or `f: Quick::Float64(-1..3)`
+- [ ] String of generated size: `s: Quick::String(Quick::Range(0, 50))`
 - [ ] Numeric value for a size (same as `Int32`, but has smaller default limit 0..100): `size: Quick::Size`
 - [ ] Pick one value from the list: `value: Quick::Choose("red", "green", "blue")`
-- [ ] Pick one generator from the list: `value: Quick::Choose(Int32, "hello world", Bool)`
+- [ ] Pick one generator from the list: `value: Quick::Choose(Int32, HelloWorldGen, FloatRange(2, 4), Bool)`
 
 ### Literal generator that returns same value
 
