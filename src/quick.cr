@@ -210,14 +210,12 @@ module Quick
     end
   end
 
-  module Literal
-    macro def_generator(name, value)
-      class {{name.id}}
-        include Generator(typeof({{value}}))
+  macro def_literal(name, value)
+    class {{name.id}}
+      include Generator(typeof({{value}}))
 
-        def self.next
-          {{value}}
-        end
+      def self.next
+        {{value}}
       end
     end
   end

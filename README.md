@@ -71,7 +71,9 @@ block arguments. Possible options:
 First define your own literal generator class, that will always return provided value:
 
 ```crystal
-Quick::Literal.def_generator(HelloWorldGen, "hello world")
+# it defines special HelloWorldGen type, that can be
+# used in type annotations afterwards
+Quick.def_literal(HelloWorldGen, "hello world")
 ```
 
 And then use it:

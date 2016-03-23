@@ -21,13 +21,13 @@ Spec2.describe "Special generators" do
     end
   end
 
-  Literal.def_generator(AnswerOfTheUniverseGen, 42)
+  def_literal(AnswerOfTheUniverseGen, 42)
   describe_literal_generator(AnswerOfTheUniverseGen, value = 42)
 
-  Literal.def_generator(HelloWorldGen, "hello world")
+  def_literal(HelloWorldGen, "hello world")
   describe_literal_generator(HelloWorldGen, value = "hello world")
 
-  Literal.def_generator(SomeArrayGen, [1, 2, 4, 3])
+  def_literal(SomeArrayGen, [1, 2, 4, 3])
   describe_literal_generator(SomeArrayGen, value = [1, 2, 4, 3])
 
   describe_integer_generator(
