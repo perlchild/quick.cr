@@ -212,7 +212,7 @@ module Quick
 
   macro def_literal(name, value)
     class {{name.id}}
-      include Generator(typeof({{value}}))
+      include ::Quick::Generator(typeof({{value}}))
 
       def self.next
         {{value}}
@@ -222,7 +222,7 @@ module Quick
 
   macro def_choice(name, *values)
     class {{name.id}}
-      include Generator(typeof({{values.argify}}))
+      include ::Quick::Generator(typeof({{values.argify}}))
 
       def self.next
         {{values}}.sample
@@ -232,7 +232,7 @@ module Quick
 
   macro def_gen_choice(name, *gens)
     class {{name.id}}
-      include Generator(typeof(self.next))
+      include ::Quick::Generator(typeof(self.next))
 
       GENS = {{gens.map { |g| "::Quick::GeneratorFor(#{g})".id } }}
 
