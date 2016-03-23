@@ -197,4 +197,21 @@ Spec2.describe "Special generators" do
       distribution(100000, generator, expected, 500, &.itself)
     end
   end
+
+  describe "x : GenChoiceGen" do
+    def_gen_choice(RangeChoiceGen, Range(0, 100), Range(50, 150), String(10))
+    subject(generator) { GeneratorFor(RangeChoiceGen) }
+
+    it "returns value of union type" do
+      expect(typeof(generator.next)).to eq(::String|Int32)
+    end
+
+    it "has correct distribution by type" do
+      expected = {
+        Int32 => 66666,
+        ::String => 33333
+      }
+      distribution(100000, generator, expected, 500, &.class)
+    end
+  end
 end

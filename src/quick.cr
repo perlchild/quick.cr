@@ -229,6 +229,22 @@ module Quick
       end
     end
   end
+
+  macro def_gen_choice(name, *gens)
+    class {{name.id}}
+      include Generator(typeof(self.next))
+
+      GENS = {{gens.map { |g| "::Quick::GeneratorFor(#{g})".id } }}
+
+      def self.next
+        GENS.sample.next
+      end
+
+      def next
+        self.class.next
+      end
+    end
+  end
 end
 
 require "./**"
