@@ -219,6 +219,16 @@ module Quick
       end
     end
   end
+
+  macro def_choice(name, *values)
+    class {{name.id}}
+      include Generator(typeof({{values.argify}}))
+
+      def self.next
+        {{values}}.sample
+      end
+    end
+  end
 end
 
 require "./**"

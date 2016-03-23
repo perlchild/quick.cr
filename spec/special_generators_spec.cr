@@ -179,4 +179,22 @@ Spec2.describe "Special generators" do
     unique_sized = 10,
     ::String
   )
+
+  describe "x : LiteralChoiceGen" do
+    def_choice(ColorGen, "red", 35, "blue")
+    subject(generator) { GeneratorFor(ColorGen) }
+
+    it "returns value of union type" do
+      expect(typeof(generator.next)).to eq(::String|Int32)
+    end
+
+    it "has correct distribution" do
+      expected = {
+        "red" => 33333,
+        35 => 33333,
+        "blue" => 33333
+      }
+      distribution(100000, generator, expected, 500, &.itself)
+    end
+  end
 end

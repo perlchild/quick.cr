@@ -63,7 +63,7 @@ block arguments. Possible options:
 - [x] String of specific size: `s : Quick::String(15)`
 - [x] String of generated size: `s : Quick::String(Quick::Range(0, 50))`
 - [x] Numeric value for a size (same as `Int32`, but has smaller default limit 0..100): `size : Quick::Size`
-- [ ] Pick one value from the list: `Quick.def_choice(ColorGen, "red", "blue", "green")` and use it as `value : ColorGen`
+- [x] Pick one value from the list: `Quick.def_choice(ColorGen, "red", "blue", "green")` and use it as `value : ColorGen`
 - [ ] Pick one generator from the list: `Quick.def_choice(RandomStuffGen, Int32, HelloWorldGen, ColorGen, FloatRange(2, 4), Bool)` and use it as `value : RandomStuffGen`
 
 ### Literal generator that returns same value
