@@ -94,61 +94,30 @@ Spec2.describe "Basic generators" do
     log10_count = 80
   )
 
-  macro describe_array_like(ty, median_size = 50, median_precision = 5, min_size = 0, max_size = Quick::MAX_SIZE, unique_sized = 99)
-    describe "s : {{ty}}" do
-      subject(generator) { GeneratorFor({{ty}}) }
+  describe_array_like(::String)
 
-      it "returns a {{ty}}" do
-        expect(generator.next).to be_a({{ty}})
-        expect(typeof(generator.next)).to eq({{ty}})
-      end
+  describe_array_like(::Array(UInt32))
+  describe_array_like(::Array(Int32))
 
-      it "has proper median" do
-        median(1000, generator, {{median_size}}, {{median_precision}}, &.size)
-      end
+  describe_array_like(::Array(UInt8))
+  describe_array_like(::Array(Int8))
 
-      it "has proper min variance" do
-        variance(1000, generator, {{median_size}}, {{min_size}}, 0.9, 1, &.size)
-      end
+  describe_array_like(::Array(UInt16))
+  describe_array_like(::Array(Int16))
 
-      it "has proper max variance" do
-        variance(1000, generator, {{median_size}}, {{max_size}}, 0.9, 1, &.size)
-      end
+  describe_array_like(::Array(UInt64))
+  describe_array_like(::Array(Int64))
 
-      it "generates enough unique sized arrays" do
-        enough_uniqueness(1000, generator, {{unique_sized}}, &.size)
-      end
+  describe_array_like(::Array(Float32))
+  describe_array_like(::Array(Float64))
 
-      it "generates enough unique valued values" do
-        enough_uniqueness(1000, generator, 900, &.itself)
-      end
-    end
-  end
+  describe_array_like(::Array(::String))
+  describe_array_like(::Array(Bool))
 
-  describe_array_like(String)
-
-  describe_array_like(Array(UInt32))
-  describe_array_like(Array(Int32))
-
-  describe_array_like(Array(UInt8))
-  describe_array_like(Array(Int8))
-
-  describe_array_like(Array(UInt16))
-  describe_array_like(Array(Int16))
-
-  describe_array_like(Array(UInt64))
-  describe_array_like(Array(Int64))
-
-  describe_array_like(Array(Float32))
-  describe_array_like(Array(Float64))
-
-  describe_array_like(Array(String))
-  describe_array_like(Array(Bool))
-
-  describe_array_like(Array(Array(Int32)))
+  describe_array_like(::Array(::Array(Int32)))
 
   describe_array_like(
-    Tuple(Int32, String),
+    Tuple(Int32, ::String),
     median_size = 2,
     median_precision = 0.1,
     min_size = 2,
@@ -156,7 +125,7 @@ Spec2.describe "Basic generators" do
     unique_sized = 1
   )
 
-  describe_array_like(Hash(String, Float64))
+  describe_array_like(Hash(::String, Float64))
 
   describe "b : Bool" do
     subject(generator) { GeneratorFor(Bool) }

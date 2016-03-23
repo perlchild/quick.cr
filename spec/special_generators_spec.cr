@@ -31,6 +31,16 @@ Spec2.describe "Special generators" do
   describe_literal_generator(SomeArrayGen, value = [1, 2, 4, 3])
 
   describe_integer_generator(
+    Quick::Size,
+    count = 100000,
+    median = 50,
+    median_precision = 2,
+    uniq_count = MAX_SIZE,
+    log10_count = 2,
+    Int32
+  )
+
+  describe_integer_generator(
     Quick::Range(139, 792),
     count = 100000,
     median = 465,
@@ -118,5 +128,55 @@ Spec2.describe "Special generators" do
     uniq_count = 90000,
     log10_count = 1,
     FloatRange(-77, 429)
+  )
+
+  describe_array_like(
+    Array(Int32, 50),
+    median_size = 50,
+    median_precision = 0.1,
+    min_size = 50,
+    max_size = 50,
+    unique_sized = 1,
+    ::Array(Int32)
+  )
+
+  describe_array_like(
+    Array(::String, 25),
+    median_size = 25,
+    median_precision = 0.1,
+    min_size = 25,
+    max_size = 25,
+    unique_sized = 1,
+    ::Array(::String)
+  )
+
+  describe_array_like(
+    Array(Int32, Range(12, 25)),
+    median_size = 18.5,
+    median_precision = 2,
+    min_size = 12,
+    max_size = 24,
+    unique_sized = 13,
+    ::Array(Int32)
+  )
+
+  describe_array_like(
+    String(25),
+    median_size = 25,
+    median_precision = 0.1,
+    min_size = 25,
+    max_size = 25,
+    unique_sized = 1,
+    ::String
+  )
+
+  describe_array_like(
+    String(Range(10, 20)),
+    median_size = 15,
+    median_precision = 2,
+    min_size = 10,
+    max_size = 19,
+    unique_sized = 10,
+    ::String
   )
 end

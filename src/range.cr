@@ -1,7 +1,7 @@
 module Quick
   macro def_range(name, ty, &to_range_length)
     class {{name.id}}(A, B)
-      extend Generator({{ty.id}})
+      include Generator({{ty.id}})
       extend RangedGenerator({{ty.id}})
 
       def self.next
@@ -51,4 +51,6 @@ module Quick
   def_float_range(32)
   def_float_range(64)
   alias FloatRange = FloatRange64
+
+  alias Size = Range(0, Quick::MAX_SIZE)
 end

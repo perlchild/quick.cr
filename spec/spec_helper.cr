@@ -73,6 +73,39 @@ module SpecHelpers
     end
   end
 
+  macro describe_array_like(ty, median_size = 50, median_precision = 5, min_size = 0, max_size = Quick::MAX_SIZE, unique_sized = 99, expected_type = nil)
+    {% expected_type = ty unless expected_type %}
+
+    describe "s : {{ty}}" do
+      subject(generator) { GeneratorFor({{ty}}) }
+
+      it "returns a {{ty}}" do
+        expect(generator.next).to be_a({{expected_type}})
+        expect(typeof(generator.next)).to eq({{expected_type}})
+      end
+
+      it "has proper median" do
+        median(1000, generator, {{median_size}}, {{median_precision}}, &.size)
+      end
+
+      it "has proper min variance" do
+        variance(1000, generator, {{median_size}}, {{min_size}}, 0.9, 1, &.size)
+      end
+
+      it "has proper max variance" do
+        variance(1000, generator, {{median_size}}, {{max_size}}, 0.9, 1, &.size)
+      end
+
+      it "generates enough unique sized arrays" do
+        enough_uniqueness(1000, generator, {{unique_sized}}, &.size)
+      end
+
+      it "generates enough unique valued values" do
+        enough_uniqueness(1000, generator, 900, &.itself)
+      end
+    end
+  end
+
   def median(count, generator, expected, difference)
     values = (0...count).map { yield(generator.next) }
     actual = values.map(&.to_f./(count)).sum

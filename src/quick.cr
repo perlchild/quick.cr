@@ -50,7 +50,6 @@ module Quick
   end
 
   module Generator(T)
-    abstract def next : T
   end
 
   module RangedGenerator(T)
@@ -58,9 +57,31 @@ module Quick
     abstract def upper_bound : T
   end
 
+  class RangeUtils(T)
+    def self.min_size_of(n : T)
+      n
+    end
+
+    def self.min_size_of(r : RangedGenerator(T))
+      r.lower_bound
+    end
+
+    def self.max_size_of(n : T)
+      n + 1
+    end
+
+    def self.max_size_of(r : RangedGenerator(T))
+      r.upper_bound
+    end
+  end
+
   class GeneratorFor(T)
     def self.next_for(t : Bool.class)
       RNG.next_bool
+    end
+
+    def self.next_for(t : Char.class)
+      _char
     end
 
     def self.next_for(t : Int32.class)
@@ -103,13 +124,13 @@ module Quick
       _float32
     end
 
-    def self.next_for(t : String.class)
-      String.build do |io|
+    def self.next_for(t : ::String.class)
+      ::String.build do |io|
         _array_like(io) { _char }
       end
     end
 
-    def self.next_for(t : Array(U).class)
+    def self.next_for(t : ::Array(U).class)
       _array_like([] of U) { GeneratorFor(U).next }
     end
 
@@ -118,10 +139,10 @@ module Quick
     end
 
     def self.next_for(t : Hash(K, V).class)
-      GeneratorFor(Array({K, V})).next.to_h
+      GeneratorFor(::Array({K, V})).next.to_h
     end
 
-    def self.next_for(t : Generator(U))
+    def self.next_for(t : Generator(U).class)
       t
     end
 
@@ -129,7 +150,7 @@ module Quick
       casted_value(next_for(T).not_nil!)
     end
 
-    def self.casted_value(value : Generator(U))
+    def self.casted_value(value : Generator(U).class)
       value.next as U
     end
 
@@ -173,15 +194,15 @@ module Quick
         RNG.rand(min_order..max_order)
     end
 
-    def self._array_like(array)
-      _size.times do
+    def self._array_like(array, min_size = 0, max_size = MAX_SIZE)
+      _size(min_size, max_size).times do
         array << yield
       end
       array
     end
 
-    def self._size
-      rand(MAX_SIZE)
+    def self._size(min_size, max_size)
+      RNG.rand(min_size...max_size)
     end
 
     def self._char
@@ -192,7 +213,7 @@ module Quick
   module Literal
     macro def_generator(name, value)
       class {{name.id}}
-        extend Generator(typeof({{value}}))
+        include Generator(typeof({{value}}))
 
         def self.next
           {{value}}
