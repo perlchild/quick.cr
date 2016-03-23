@@ -47,7 +47,7 @@ module Quick
     end
   end
 
-  macro check(name, args = nil, number_of_tests = DEFAULT_TEST_COUNT, &block)
+  macro check(name, args = nil, number_of_tests = ::Quick::DEFAULT_TEST_COUNT, &block)
     {% if args %}
 
       {% vars = args.map(&.var) %}
