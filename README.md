@@ -20,22 +20,21 @@ require "quick"
 
 ### Property testing
 
-- [ ] To be done
-
 ```crystal
-Quick.check("add reflexivity") do |x : Int32, y : Int32|
+Quick.check("add reflexivity", [x : Int32, y : Int32]) do
   add(x, y) == add(y, x)
 end
 ```
 
-It raises `Quick::CheckFailedError` when property does not hold for some
-values.
+It raises `Quick::CheckFailedError(T)` when property does not hold for some
+values. `T` is a type of tuple, containing all failed arguments.
+These failed arguments are accessible on error instance as `error.failed_args`.
 
 ### Configuration
 
 `Quick.check` accepts different keyword arguments, that can be combined:
 
-- `Quick.check("property", number_of_tests: 100)` - `number_of_tests` controls,
+- `Quick.check("property", [value : Int32], number_of_tests: 100)` - `number_of_tests` controls,
   how much tests are generated to verify the property. Default: `100`.
 
 ### Control over generated data
