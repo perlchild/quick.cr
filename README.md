@@ -44,14 +44,14 @@ These failed arguments are accessible on error instance as `error.failed_args`.
 block arguments. Possible options:
 
 - A basic type with default min/max limits:
-  - `x : Int32`,
+  - `x : Int32`, also, `UInt32, Int8, UInt8, Int16, UInt16, Int64 and UInt64` are supported,
   - `s : String`,
-  - `f : Float64`,
+  - `f : Float64`, also, `Float32` is supported,
   - `c : Char`
   - `b : Bool`,
-  - `a : Array(Int32)`,
-  - `p : Tuple(Int32, Float64)` (pair)
-  - `h : Hash(String, Float64)`
+  - `a : Array(Int32)`, and `Array(T)` in general case, where `T` can be any of supported basic types, built-in generators and user-defined generators,
+  - `p : Tuple(Int32, Float64)` (pair), `Tuple(T, U)` in general case,
+  - `h : Hash(String, Float64)`, `Hash(K, V)` in general case,
 - One of the range: `value : Quick::Range(13, 79)`
   - `Quick::Range` is an alias for `Quick::Range32`, which works only with `Int32`
   - `Quick::Range8` and `Quick::Range16` are available for corresponding `Int8` and `Int16` types
