@@ -1,11 +1,24 @@
+require "./shrink"
+
 module Quick
   macro def_range(name, ty, &to_range_length)
     class {{name.id}}(A, B)
       include Generator({{ty.id}})
+      include Shrinker({{ty.id}})
       extend RangedGenerator({{ty.id}})
 
       def self.next
         transposed_value
+      end
+
+      def self.shrink(failed_value, prop)
+        ShrinkerFor(Int32, Int32).shrink(failed_value) do |value|
+          if lower_bound <= value <= upper_bound
+            prop.call(value)
+          else
+            true
+          end
+        end
       end
 
       def self.lower_bound

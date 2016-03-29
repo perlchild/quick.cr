@@ -131,7 +131,7 @@ module Quick
     end
 
     def self.next_for(t : ::Array(U).class)
-      _array_like([] of U) { GeneratorFor(U).next }
+      _array_like([] of typeof(GeneratorFor(U).next)) { GeneratorFor(U).next }
     end
 
     def self.next_for(t : {K, V}.class)
@@ -155,7 +155,7 @@ module Quick
     end
 
     def self.casted_value(value)
-      value as T
+      value
     end
 
     def self._int
