@@ -124,6 +124,68 @@ Quick.check("valid user") do |user : UserGen(Quick::Range(10, 20), Quick::Range(
 end
 ```
 
+### Defining a shrinking strategy on your generators
+
+- `include Quick::Shrinker(T)`, where T is type of shrinked values,
+- and implement `def self.shrink(failed_value : T, prop : T -> Bool) : T`.
+
+`self.shrink` should make a guess about the next shrinked value and verify,
+that it still fails by calling `prop`:
+
+```crystal
+next_value = .. guess next shrinked value from `failed_value` ..
+if prop.call(next_value)
+  .. No, guess is incorrect, property will succeed with `next_value` ..
+  .. typically rollback, and try another guess, continue the loop or use recursion ..
+else
+  .. Yes, guess is correct, property still fails with `next_value` ..
+  .. typically, continue on improving your guess, continue the loop or use recursion ..
+end
+```
+
+At any point of time, if you can't make a better guess, that still fails
+`prop`, then it is time to return a last known best shrinked still failing
+value.
+
+Enough with the words, example:
+
+```crystal
+class UppercaseLetter
+  include Quick::Generator(Char)
+  include Quick::Shrinker(Char)
+
+  def self.next : Char
+    # .. generate next random uppercase letter ..
+  end
+
+  def self.shrink(failed_value : Char, prop : Char -> Bool) : Char
+    # make a best guess (#pred returns previous character)
+    guess = failed_value.pred
+
+    # check that value is still valid
+    # and check that property is still failing
+    if guess >= 'A' && !prop.call(guess)
+      # recur with our new improved shrinked failing value
+      return shrink(guess, prop)
+    end
+
+    # otherwise return last-known best shrinked still failing value
+    failed_value
+  end
+end
+```
+
+You may want to re-use built-in and other existing shrink strategies in your
+shrink strategy, use it as:
+
+```crystal
+Quick::ShrinkerFor(S).shrink(value, prop)
+```
+
+Where `S` - built-in generator (`GeneratorFor(Array(Int32))` for example), or
+any custom shrinker, that `include`-s `Shrinker(T)` and implements
+`self.shrink(T, T -> Bool) : T`.
+
 ## Development
 
 After cloning this repository, run `shards install` to install dependencies.
