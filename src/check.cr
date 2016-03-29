@@ -28,23 +28,42 @@ module Quick
   end
 
   class Check(T)
-    def initialize(@name, &@gen_to_value : -> T)
+    def initialize(@name, &@gen_to_value : Proc(T))
+    end
+
+    def with_shrink_strategy(&@shrinking_strategy : Proc(T, Proc(T, Bool), T))
+      self
     end
 
     def next_values
       @gen_to_value.call
     end
 
-    def check(number_of_tests)
+    def shrink(values, prop : T -> Bool)
+      if strategy = @shrinking_strategy
+        return strategy.call(values, prop)
+      end
+      values
+    end
+
+    def check(number_of_tests, &prop : Proc(T, Bool))
       number_of_tests.times do
         values = next_values
-        result = yield(values)
+        result = prop.call(values)
 
         unless result
-          raise CheckFailedError.new(@name, values)
+          raise CheckFailedError.new(@name, shrink(values, prop))
         end
       end
     end
+  end
+
+  macro _tuple_assoc(tuple, size, idx, value)
+    {
+      {% for i in (0...size) %}
+        {% if i == idx %} {{value}} {% else %} {{tuple}}[{{i}}] {% end %},
+      {% end %}
+    }
   end
 
   macro check(name, args = nil, number_of_tests = ::Quick::DEFAULT_TEST_COUNT, &block)
@@ -64,6 +83,19 @@ module Quick
             {{gen}}.next,
           {% end %}
         }
+      end.with_shrink_strategy do |values, prop|
+        %values = ::Quick._tuple_assoc(values, {{gens.size}}, 0, values[0])
+
+        {% for i in (0...gens.size) %}
+          shrinked = ::Quick::ShrinkerFor({{gens[i]}}, {{value_types[i]}})
+          .shrink(values[{{i}}]) do |value|
+            prop.call(::Quick._tuple_assoc(%values, {{gens.size}}, {{i}}, value))
+          end
+
+          %values = ::Quick._tuple_assoc(%values, {{gens.size}}, {{i}}, shrinked)
+        {% end %}
+
+        %values
       end.check({{number_of_tests}}) do |%vars|
         {% if vars.size == 1 %}
           {{vars[0]}} = %vars[0]
